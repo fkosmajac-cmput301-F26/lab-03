@@ -25,6 +25,8 @@ import com.example.listycity3.ui.theme.ListyCity3Theme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.Alignment
 
 @Composable
 fun CityListScreen(
@@ -97,6 +99,11 @@ fun CityListScreen(
                     Text("Add City")
                 }
             }
+
+            Text(
+                text = "To edit entries click on them",
+                Modifier.align(Alignment.CenterHorizontally)
+            )
         }
         LazyColumn(modifier = modifier.fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
@@ -113,22 +120,55 @@ fun CityListScreen(
 
 @Composable
 fun CityRow(city: City) {
+
+    var editing by remember { mutableStateOf(false)}
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp)
+            .clickable { editing = true }
     ) {
-        Text(
-            text = city.name,
-            fontSize = 30.sp,
-            modifier = Modifier.weight(1f)
-        )
 
-        Text(
-            text = city.province,
-            fontSize = 30.sp,
-            modifier = Modifier.weight(1f)
-        )
+        if (editing) {
+            OutlinedTextField(
+                value = city.name,
+                onValueChange = { city.name = it },
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            OutlinedTextField(
+                value = city.province,
+                onValueChange = { city.province = it },
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Button( onClick = {
+                if (city.name.isNotBlank() && city.province.isNotBlank()) {
+                    editing = false
+                }
+            } )
+            {
+                Text("Done")
+            }
+        } else {
+
+            Text(
+                text = city.name,
+                fontSize = 30.sp,
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                text = city.province,
+                fontSize = 30.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
